@@ -1,4 +1,4 @@
-const CACHE_STATIC_CURRENT_NAME = 'static-v2';
+const CACHE_STATIC_CURRENT_NAME = 'static-v3';
 const CACHE_DYNAMIC_CURRENT_NAME = 'dynamic-v2';
 
 self.addEventListener('install', (event) => {
@@ -51,7 +51,8 @@ self.addEventListener('fetch', (event) => {
                         .then((res) => {
                             return caches.open(CACHE_DYNAMIC_CURRENT_NAME)
                                 .then((cache) => {
-                                    cache.put(event.request.url, res.clone());
+                                    // temporary disable dynamic caching
+                                    // cache.put(event.request.url, res.clone());
                                     return res;
                                 })
                         })
