@@ -41,6 +41,50 @@ self.addEventListener('activate', (event) => {
     return self.clients.claim();
 });
 
+self.addEventListener('fetch', (event) => {
+    var url = 'https://httpbin.org/get';
+    // get from network only not cached previously data requests
+    if (~event.request.url.indexOf(url)) {
+        event.respondWith(
+            caches.open(CACHE_DYNAMIC_CURRENT_NAME)
+                .then((cache) => {
+                    return fetch(event.request)
+                        .then((res) => {
+                            cache.put(event.request, res.clone());
+                            return res;
+                        })
+                })
+        );
+    } else {
+        // get pre-fetched resources from cache
+        // otherwise try to get from network
+        event.respondWith(
+            caches.match(event.request)
+                .then((response) => {
+                    if (response) {
+                       return response;
+                    } else {
+                        return fetch(event.request)
+                            .then((res) => {
+                                return caches.open(CACHE_DYNAMIC_CURRENT_NAME)
+                                    .then((cache) => {
+                                        cache.put(event.request.url, res.clone());
+                                        return res;
+                                    })
+                            })
+                            .catch((err) => {
+                                return caches.open(CACHE_STATIC_CURRENT_NAME)
+                                    .then((cache) => {
+                                        return cache.match('/offline.html');
+                                    })
+                            });
+                    }
+                })
+        );
+    }
+
+});
+
 // self.addEventListener('fetch', (event) => {
 //     event.respondWith(
 //         caches.match(event.request)
@@ -67,16 +111,22 @@ self.addEventListener('activate', (event) => {
 //     );
 // });
 
-//Network first with cache fallback strategy
-self.addEventListener('fetch', (event) => {
-    event.respondWith(
-        fetch(event.request)
-            .catch((error) => {
-                // on any error try to get resource from the cache
-                return caches.match(event.request);
-            })
-    );
-});
+// //Network first with cache fallback strategy
+// self.addEventListener('fetch', (event) => {
+//     event.respondWith(
+//         fetch(event.request)
+//             // Use dynamic caching if loaded from network
+//             .then((res => caches.open(CACHE_DYNAMIC_CURRENT_NAME)
+//                                     .then((cache) => {
+//                                         cache.put(event.request.url, res.clone());
+//                                         return res;
+//                                     })))
+//             .catch((error) => {
+//                 // on any error try to get resource from the cache
+//                 return caches.match(event.request);
+//             })
+//     );
+// });
 
 // // Cache only strategy - no network request
 // self.addEventListener('fetch', (event) => {
