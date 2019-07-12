@@ -1,4 +1,4 @@
-const CACHE_STATIC_CURRENT_NAME = 'static-v2';
+const CACHE_STATIC_CURRENT_NAME = 'static-v3';
 const CACHE_DYNAMIC_CURRENT_NAME = 'dynamic-v2';
 
 self.addEventListener('install', (event) => {
@@ -41,28 +41,36 @@ self.addEventListener('activate', (event) => {
     return self.clients.claim();
 });
 
+// self.addEventListener('fetch', (event) => {
+//     event.respondWith(
+//         caches.match(event.request)
+//             .then((response) => {
+//                 if (response) {
+//                    return response;
+//                 } else {
+//                     return fetch(event.request)
+//                         .then((res) => {
+//                             return caches.open(CACHE_DYNAMIC_CURRENT_NAME)
+//                                 .then((cache) => {
+//                                     cache.put(event.request.url, res.clone());
+//                                     return res;
+//                                 })
+//                         })
+//                         .catch((err) => {
+//                             return caches.open(CACHE_STATIC_CURRENT_NAME)
+//                                 .then((cache) => {
+//                                     return cache.match('/offline.html');
+//                                 })
+//                         });
+//                 }
+//             })
+//     );
+// });
+
+// Cache only strategy - no network request
 self.addEventListener('fetch', (event) => {
     event.respondWith(
+        //Respond with cached resource
         caches.match(event.request)
-            .then((response) => {
-                if (response) {
-                   return response;
-                } else {
-                    return fetch(event.request)
-                        .then((res) => {
-                            return caches.open(CACHE_DYNAMIC_CURRENT_NAME)
-                                .then((cache) => {
-                                    cache.put(event.request.url, res.clone());
-                                    return res;
-                                })
-                        })
-                        .catch((err) => {
-                            return caches.open(CACHE_STATIC_CURRENT_NAME)
-                                .then((cache) => {
-                                    return cache.match('/offline.html');
-                                })
-                        });
-                }
-            })
     );
 });
