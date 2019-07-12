@@ -1,4 +1,4 @@
-const CACHE_STATIC_CURRENT_NAME = 'static-v3';
+const CACHE_STATIC_CURRENT_NAME = 'static-v2';
 const CACHE_DYNAMIC_CURRENT_NAME = 'dynamic-v2';
 
 self.addEventListener('install', (event) => {
@@ -9,6 +9,7 @@ self.addEventListener('install', (event) => {
             cache.addAll([
                 '/',
                 '/index.html',
+                '/offline.html',
                 '/src/js/app.js',
                 '/src/js/feed.js',
                 '/src/js/material.min.js',
@@ -51,12 +52,16 @@ self.addEventListener('fetch', (event) => {
                         .then((res) => {
                             return caches.open(CACHE_DYNAMIC_CURRENT_NAME)
                                 .then((cache) => {
-                                    // temporary disable dynamic caching
-                                    // cache.put(event.request.url, res.clone());
+                                    cache.put(event.request.url, res.clone());
                                     return res;
                                 })
                         })
-                        .catch((err) => {});
+                        .catch((err) => {
+                            return caches.open(CACHE_STATIC_CURRENT_NAME)
+                                .then((cache) => {
+                                    return cache.match('/offline.html');
+                                })
+                        });
                 }
             })
     );
