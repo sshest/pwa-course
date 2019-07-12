@@ -1,6 +1,7 @@
 var shareImageButton = document.querySelector('#share-image-button');
 var createPostArea = document.querySelector('#create-post');
 var closeCreatePostModalButton = document.querySelector('#close-create-post-modal-btn');
+var sharedMomentsArea = document.querySelector('#shared-moments');
 
 function openCreatePostModal() {
   createPostArea.style.display = 'block';
@@ -57,4 +58,4 @@ fetch('https://httpbin.org/get')
     .then(function(data) {
       createCard();
     })
-    .fetch(() => {});
+    .catch(() => {});
