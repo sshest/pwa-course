@@ -1,4 +1,4 @@
-const CACHE_STATIC_CURRENT_NAME = 'static-v3';
+const CACHE_STATIC_CURRENT_NAME = 'static-v2';
 const CACHE_DYNAMIC_CURRENT_NAME = 'dynamic-v2';
 const STATIC_FILES = [
     '/',
@@ -44,7 +44,7 @@ self.addEventListener('activate', (event) => {
 
 self.addEventListener('fetch', (event) => {
     var url = 'https://httpbin.org/get';
-    // get from network only not cached previously data requests
+    // get from network only data requests not cached previously
     if (~event.request.url.indexOf(url)) {
         event.respondWith(
             caches.open(CACHE_DYNAMIC_CURRENT_NAME)
@@ -56,12 +56,11 @@ self.addEventListener('fetch', (event) => {
                         })
                 })
         );
-    } else if (new RegExp('\\b ' + STATIC_FILES.join('\\b|\\b') + '\\b').test(event.request.url)) {
+    } else if (STATIC_FILES.includes(event.request.url)) {
         // Use cache only strategy for static files
         event.respondWith(
         //Respond with cached resource
-        caches.match(event.request)
-    );
+        caches.match(event.request));
     } else {
         // get pre-fetched resources from cache
         // otherwise try to get from network
@@ -82,7 +81,10 @@ self.addEventListener('fetch', (event) => {
                             .catch((err) => {
                                 return caches.open(CACHE_STATIC_CURRENT_NAME)
                                     .then((cache) => {
-                                        return cache.match('/offline.html');
+                                        // return fallback file if html file is requested
+                                        if (event.request.headers.get('accept').includes('text/html')) {
+                                            return cache.match('/offline.html');
+                                        }
                                     })
                             });
                     }
