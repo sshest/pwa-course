@@ -47,24 +47,24 @@ function clearCards() {
     }
 }
 
-function createCard() {
+function createCard(data) {
     clearCards();
   var cardWrapper = document.createElement('div');
   cardWrapper.className = 'shared-moment-card mdl-card mdl-shadow--2dp';
   var cardTitle = document.createElement('div');
   cardTitle.className = 'mdl-card__title';
-  cardTitle.style.backgroundImage = 'url("/src/images/sf-boat.jpg")';
+  cardTitle.style.backgroundImage = 'url(' + data.image + ')';
   cardTitle.style.backgroundSize = 'cover';
   cardTitle.style.height = '180px';
   cardWrapper.appendChild(cardTitle);
   var cardTitleTextElement = document.createElement('h2');
   cardTitleTextElement.className = 'mdl-card__title-text';
   cardTitleTextElement.style.color = 'white';
-  cardTitleTextElement.textContent = 'San Francisco Trip';
+  cardTitleTextElement.textContent = data.title;
   cardTitle.appendChild(cardTitleTextElement);
   var cardSupportingText = document.createElement('div');
   cardSupportingText.className = 'mdl-card__supporting-text';
-  cardSupportingText.textContent = 'In San Francisco';
+  cardSupportingText.textContent = data.location;
   cardSupportingText.style.textAlign = 'center';
   // var saveCardButton = document.createElement('button');
   // saveCardButton.textContent ='Save';
@@ -75,7 +75,13 @@ function createCard() {
   sharedMomentsArea.appendChild(cardWrapper);
 }
 
-var url = 'https://httpbin.org/get';
+function updateUI(data) {
+    for (var i=0; i < data.length; i++) {
+        createCard(data[i]);
+    }
+}
+
+var url = 'https://pwa-cource-project.firebaseio.com/posts.json';
 var networkDataReceived = false;
 
 fetch(url)
@@ -85,7 +91,11 @@ fetch(url)
     .then(function(data) {
         console.log('From Web', data);
         networkDataReceived = true;
-        createCard();
+        const dataToArray = [];
+        for (const key in data) {
+            dataToArray.push(data[key]);
+        }
+        updateUI(dataToArray);
     })
     .catch(() => {});
 
@@ -101,7 +111,11 @@ if ('caches' in window) {
             if (networkDataReceived) {
                 return;
             }
-            createCard();
+            const dataToArray = [];
+            for (const key in data) {
+                dataToArray.push(data[key]);
+            }
+            updateUI(dataToArray);
         })
 }
 
