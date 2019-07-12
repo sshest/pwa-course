@@ -1,25 +1,26 @@
 const CACHE_STATIC_CURRENT_NAME = 'static-v3';
 const CACHE_DYNAMIC_CURRENT_NAME = 'dynamic-v2';
+const STATIC_FILES = [
+    '/',
+    '/index.html',
+    '/offline.html',
+    '/src/js/app.js',
+    '/src/js/feed.js',
+    '/src/js/material.min.js',
+    '/src/css/app.css',
+    '/src/css/feed.css',
+    '/src/images/main-image.jpg',
+    'https://fonts.googleapis.com/css?family=Roboto:400,700',
+    'https://fonts.googleapis.com/icon?family=Material+Icons',
+    'https://cdnjs.cloudflare.com/ajax/libs/material-design-lite/1.3.0/material.indigo-pink.min.css'
+];
 
 self.addEventListener('install', (event) => {
     console.log('[Service Worker] Installing service worker ...', event);
     event.waitUntil(caches.open(CACHE_STATIC_CURRENT_NAME)
         .then((cache) => {
             console.log('[Serwice worker] Precaching App Shell');
-            cache.addAll([
-                '/',
-                '/index.html',
-                '/offline.html',
-                '/src/js/app.js',
-                '/src/js/feed.js',
-                '/src/js/material.min.js',
-                '/src/css/app.css',
-                '/src/css/feed.css',
-                '/src/images/main-image.jpg',
-                'https://fonts.googleapis.com/css?family=Roboto:400,700',
-                'https://fonts.googleapis.com/icon?family=Material+Icons',
-                'https://cdnjs.cloudflare.com/ajax/libs/material-design-lite/1.3.0/material.indigo-pink.min.css'
-            ]);
+            cache.addAll(STATIC_FILES);
         }));
 });
 
@@ -55,6 +56,12 @@ self.addEventListener('fetch', (event) => {
                         })
                 })
         );
+    } else if (new RegExp('\\b ' + STATIC_FILES.join('\\b|\\b') + '\\b').test(event.request.url)) {
+        // Use cache only strategy for static files
+        event.respondWith(
+        //Respond with cached resource
+        caches.match(event.request)
+    );
     } else {
         // get pre-fetched resources from cache
         // otherwise try to get from network
