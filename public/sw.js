@@ -41,28 +41,39 @@ self.addEventListener('activate', (event) => {
     return self.clients.claim();
 });
 
+// self.addEventListener('fetch', (event) => {
+//     event.respondWith(
+//         caches.match(event.request)
+//             .then((response) => {
+//                 if (response) {
+//                    return response;
+//                 } else {
+//                     return fetch(event.request)
+//                         .then((res) => {
+//                             return caches.open(CACHE_DYNAMIC_CURRENT_NAME)
+//                                 .then((cache) => {
+//                                     cache.put(event.request.url, res.clone());
+//                                     return res;
+//                                 })
+//                         })
+//                         .catch((err) => {
+//                             return caches.open(CACHE_STATIC_CURRENT_NAME)
+//                                 .then((cache) => {
+//                                     return cache.match('/offline.html');
+//                                 })
+//                         });
+//                 }
+//             })
+//     );
+// });
+
+//Network first with cache fallback strategy
 self.addEventListener('fetch', (event) => {
     event.respondWith(
-        caches.match(event.request)
-            .then((response) => {
-                if (response) {
-                   return response;
-                } else {
-                    return fetch(event.request)
-                        .then((res) => {
-                            return caches.open(CACHE_DYNAMIC_CURRENT_NAME)
-                                .then((cache) => {
-                                    cache.put(event.request.url, res.clone());
-                                    return res;
-                                })
-                        })
-                        .catch((err) => {
-                            return caches.open(CACHE_STATIC_CURRENT_NAME)
-                                .then((cache) => {
-                                    return cache.match('/offline.html');
-                                })
-                        });
-                }
+        fetch(event.request)
+            .catch((error) => {
+                // on any error try to get resource from the cache
+                return caches.match(event.request);
             })
     );
 });
