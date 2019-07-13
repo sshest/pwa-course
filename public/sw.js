@@ -1,5 +1,5 @@
 const CACHE_STATIC_CURRENT_NAME = 'static-v3';
-const CACHE_DYNAMIC_CURRENT_NAME = 'dynamic-v5';
+const CACHE_DYNAMIC_CURRENT_NAME = 'dynamic-v1';
 const STATIC_FILES = [
     '/',
     '/index.html',
@@ -43,9 +43,10 @@ self.addEventListener('activate', (event) => {
 });
 
 self.addEventListener('fetch', (event) => {
-    var url = 'https://pwa-cource-project.firebaseio.com/posts.json';
+    var url = 'https://pwa-cource-project.firebaseio.com/posts';
     // get from network only data requests not cached previously
-    if (!~event.request.url.indexOf(url)) {
+    if (~event.request.url.indexOf(url)) {
+        console.log('[Service Worker] JSON Data requested');
         event.respondWith(
             caches.open(CACHE_DYNAMIC_CURRENT_NAME)
                 .then((cache) => {
