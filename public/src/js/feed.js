@@ -99,23 +99,14 @@ fetch(url)
     })
     .catch(() => {});
 
-if ('caches' in window) {
-    caches.match(url)
-        .then((response) => {
-            if (response) {
-                return response.json();
-            }
-        })
+if ('indexedDB' in window) {
+    readAllData('posts')
         .then(data => {
-            console.log('From the cache', data);
+            console.log('From the indexedDB', data);
             if (networkDataReceived) {
                 return;
             }
-            const dataToArray = [];
-            for (const key in data) {
-                dataToArray.push(data[key]);
-            }
-            updateUI(dataToArray);
+            updateUI(data);
         })
 }
 
