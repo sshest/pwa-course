@@ -1,11 +1,14 @@
+importScripts('/src/js/idb.js');
+
 const CACHE_STATIC_CURRENT_NAME = 'static-v3';
-const CACHE_DYNAMIC_CURRENT_NAME = 'dynamic-v1';
+const CACHE_DYNAMIC_CURRENT_NAME = 'dynamic-v2';
 const STATIC_FILES = [
     '/',
     '/index.html',
     '/offline.html',
     '/src/js/app.js',
     '/src/js/feed.js',
+    '/src/js/idb.js',
     '/src/js/material.min.js',
     '/src/css/app.css',
     '/src/css/feed.css',
@@ -14,6 +17,12 @@ const STATIC_FILES = [
     'https://fonts.googleapis.com/icon?family=Material+Icons',
     'https://cdnjs.cloudflare.com/ajax/libs/material-design-lite/1.3.0/material.indigo-pink.min.css'
 ];
+
+const dbPromise = idb.open('posts-store', 1, (db) => {
+    if (!db.objectStoreNames.contains('posts')) {
+        db.createObjectStore('posts', {keyPath: 'id'});
+    }
+});
 
 self.addEventListener('install', (event) => {
     console.log('[Service Worker] Installing service worker ...', event);
@@ -48,13 +57,25 @@ self.addEventListener('fetch', (event) => {
     if (~event.request.url.indexOf(url)) {
         console.log('[Service Worker] JSON Data requested');
         event.respondWith(
-            caches.open(CACHE_DYNAMIC_CURRENT_NAME)
-                .then((cache) => {
-                    return fetch(event.request)
-                        .then((res) => {
-                            cache.put(event.request, res.clone());
-                            return res;
-                        })
+            fetch(event.request)
+                .then((res) => {
+                    const clonedResponse = res.clone();
+                    clonedResponse.json()
+                        .then((data) => {
+                            for (const key in data) {
+                                if(!data.hasOwnProperty(key)) {
+                                    return;
+                                }
+                                dbPromise
+                                    .then((db) => {
+                                        const transaction = db.transaction('posts', 'readwrite');
+                                        const store = transaction.objectStore('posts');
+                                        store.put(data[key]);
+                                        return transaction.complete;
+                                    })
+                            }
+                        });
+                    return res;
                 })
         );
     } else if (STATIC_FILES.includes(event.request.url)) {
