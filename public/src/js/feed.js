@@ -54,7 +54,6 @@ function createCard(data) {
   cardTitle.className = 'mdl-card__title';
   cardTitle.style.backgroundImage = 'url(' + data.image + ')';
   cardTitle.style.backgroundSize = 'cover';
-  cardTitle.style.height = '180px';
   cardWrapper.appendChild(cardTitle);
   const cardTitleTextElement = document.createElement('h2');
   cardTitleTextElement.className = 'mdl-card__title-text';
@@ -81,7 +80,7 @@ function updateUI(data) {
 }
 
 const url = 'https://pwa-cource-project.firebaseio.com/posts.json';
-const networkDataReceived = false;
+let networkDataReceived = false;
 
 fetch(url)
     .then(function(res) {
@@ -92,6 +91,9 @@ fetch(url)
         networkDataReceived = true;
         const dataToArray = [];
         for (const key in data) {
+            if(!data.hasOwnProperty(key)) {
+                return;
+            }
             dataToArray.push(data[key]);
         }
         updateUI(dataToArray);

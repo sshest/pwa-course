@@ -1,8 +1,8 @@
 importScripts('/src/js/idb.js');
 importScripts('/src/js/utility.js');
 
-const CACHE_STATIC_CURRENT_NAME = 'static-v3';
-const CACHE_DYNAMIC_CURRENT_NAME = 'dynamic-v4';
+const CACHE_STATIC_CURRENT_NAME = 'static-v5';
+const CACHE_DYNAMIC_CURRENT_NAME = 'dynamic-v5';
 const STATIC_FILES = [
     '/',
     '/index.html',
