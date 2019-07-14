@@ -80,7 +80,7 @@ function updateUI(data) {
     }
 }
 
-const url = 'https://pwa-cource-project.firebaseio.com/posts.json';
+const url = 'https://us-central1-pwa-cource-project.cloudfunctions.net/storePostsData';
 let networkDataReceived = false;
 
 fetch(url)

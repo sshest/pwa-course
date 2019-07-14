@@ -1,7 +1,7 @@
 importScripts('/src/js/idb.js');
 importScripts('/src/js/utility.js');
 
-const CACHE_STATIC_CURRENT_NAME = 'static-v2';
+const CACHE_STATIC_CURRENT_NAME = 'static-v5';
 const CACHE_DYNAMIC_CURRENT_NAME = 'dynamic-v5';
 const STATIC_FILES = [
     '/',
@@ -18,7 +18,7 @@ const STATIC_FILES = [
     'https://fonts.googleapis.com/icon?family=Material+Icons',
     'https://cdnjs.cloudflare.com/ajax/libs/material-design-lite/1.3.0/material.indigo-pink.min.css'
 ];
-const url = 'https://pwa-cource-project.firebaseio.com/posts.json';
+const url = 'https://us-central1-pwa-cource-project.cloudfunctions.net/storePostsData';
 
 self.addEventListener('install', (event) => {
     console.log('[Service Worker] Installing service worker ...', event);
@@ -179,7 +179,8 @@ self.addEventListener('sync', (event) => {
                             method: 'POST',
                             headers: {
                                 'Content-Type': 'application/json',
-                                'Accept': 'application/json'
+                                'Accept': 'application/json',
+                                'Access-Control-Allow-Origin': '*'
                             },
                             body: JSON.stringify({
                                 id: dt.id,
