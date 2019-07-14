@@ -126,10 +126,10 @@ function sendData() {
             image: 'https://firebasestorage.googleapis.com/v0/b/pwa-cource-project.appspot.com/o/sf-boat.jpg?alt=media&token=f954cec8-8679-4ee6-85c5-8eb10cdf69da'
         })
     })
-        .then((resp) => {
-            cosole.log('Sent data ', resp);
-            updateUI();
-        })
+    .then((resp) => {
+        cosole.log('Sent data ', resp);
+        updateUI();
+    });
 }
 
 form.addEventListener('submit', (ev) => {
@@ -156,8 +156,8 @@ form.addEventListener('submit', (ev) => {
                         const snackbarContainer = document.querySelector('#confirmation-toast');
                         const data = {
                             message: 'Your post was saved for synchronization!'
-                        }
-                        snackbarContainer.MaterialSnackBar.showSnackbar(data);
+                        };
+                        // snackbarContainer.MaterialSnackBar.showSnackbar(data);
                     })
                     .catch(console.log);
             })

@@ -1,7 +1,7 @@
 importScripts('/src/js/idb.js');
 importScripts('/src/js/utility.js');
 
-const CACHE_STATIC_CURRENT_NAME = 'static-v5';
+const CACHE_STATIC_CURRENT_NAME = 'static-v2';
 const CACHE_DYNAMIC_CURRENT_NAME = 'dynamic-v5';
 const STATIC_FILES = [
     '/',
@@ -18,6 +18,7 @@ const STATIC_FILES = [
     'https://fonts.googleapis.com/icon?family=Material+Icons',
     'https://cdnjs.cloudflare.com/ajax/libs/material-design-lite/1.3.0/material.indigo-pink.min.css'
 ];
+const url = 'https://pwa-cource-project.firebaseio.com/posts.json';
 
 self.addEventListener('install', (event) => {
     console.log('[Service Worker] Installing service worker ...', event);
@@ -47,7 +48,6 @@ self.addEventListener('activate', (event) => {
 });
 
 self.addEventListener('fetch', (event) => {
-    var url = 'https://pwa-cource-project.firebaseio.com/posts';
     // get from network only data requests not cached previously
     if (~event.request.url.indexOf(url)) {
         console.log('[Service Worker] JSON Data requested');
@@ -166,3 +166,37 @@ self.addEventListener('fetch', (event) => {
 //         fetch(event.request)
 //     );
 // });
+
+self.addEventListener('sync', (event) => {
+    console.log('[Service Worker] Background syncing');
+    if (event.tag === 'sync-new-post') {
+        event.waitUntil(
+            readAllData('sync-posts')
+                .then((data) => {
+                    for (const dt of data) {
+                        const postId = dt.id;
+                        fetch(url, {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                                'Accept': 'application/json'
+                            },
+                            body: JSON.stringify({
+                                id: dt.id,
+                                title: dt.title,
+                                location: dt.location,
+                                image: 'https://firebasestorage.googleapis.com/v0/b/pwa-cource-project.appspot.com/o/sf-boat.jpg?alt=media&token=f954cec8-8679-4ee6-85c5-8eb10cdf69da'
+                            })
+                        })
+                            .then((resp) => {
+                                console.log('Sent data ', resp);
+                                if (resp.ok) {
+                                    deleteSingleItemData('sync-posts', postId);
+                                }
+                            })
+                            .catch(console.log);
+                    }
+                })
+        )
+    }
+});
