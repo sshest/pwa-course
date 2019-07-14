@@ -2,6 +2,7 @@ const shareImageButton = document.querySelector('#share-image-button');
 const createPostArea = document.querySelector('#create-post');
 const closeCreatePostModalButton = document.querySelector('#close-create-post-modal-btn');
 const sharedMomentsArea = document.querySelector('#shared-moments');
+const form = document.querySelector('form');
 
 function openCreatePostModal() {
   createPostArea.style.transform = 'translateY(0)';
@@ -110,5 +111,21 @@ if ('indexedDB' in window) {
             updateUI(data);
         })
 }
+
+form.addEventListener('submit', (ev) => {
+    ev.preventDefault();
+    if (form.title.value.trim() === ''
+        && form.location.value.trim() === '') {
+        return;
+    }
+    closeCreatePostModal();
+
+    if('serviceWorker' in navigator && 'SyncManager' in window) {
+        navigator.serviceWorker.ready
+            .then((sw) => {
+                sw.sync.register('sync-new-post');
+            })
+    }
+});
 
 
