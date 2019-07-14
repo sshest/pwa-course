@@ -112,6 +112,26 @@ if ('indexedDB' in window) {
         })
 }
 
+function sendData() {
+    fetch(url, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'Accept': 'application/json'
+        },
+        body: JSON.stringify({
+            id: new Date().toISOString(),
+            title: form.title.value,
+            location: form.location.value,
+            image: 'https://firebasestorage.googleapis.com/v0/b/pwa-cource-project.appspot.com/o/sf-boat.jpg?alt=media&token=f954cec8-8679-4ee6-85c5-8eb10cdf69da'
+        })
+    })
+        .then((resp) => {
+            cosole.log('Sent data ', resp);
+            updateUI();
+        })
+}
+
 form.addEventListener('submit', (ev) => {
     ev.preventDefault();
     if (form.title.value.trim() === ''
@@ -123,8 +143,26 @@ form.addEventListener('submit', (ev) => {
     if('serviceWorker' in navigator && 'SyncManager' in window) {
         navigator.serviceWorker.ready
             .then((sw) => {
-                sw.sync.register('sync-new-post');
+                const post = {
+                    id: new Date().toISOString(),
+                    title: form.title.value,
+                    location: form.location.value
+                };
+                writeData('sync-posts', post)
+                    .then(() => {
+                        return sw.sync.register('sync-new-post');
+                    })
+                    .then(() => {
+                        const snackbarContainer = document.querySelector('#confirmation-toast');
+                        const data = {
+                            message: 'Your post was saved for synchronization!'
+                        }
+                        snackbarContainer.MaterialSnackBar.showSnackbar(data);
+                    })
+                    .catch(console.log);
             })
+    } else {
+        sendData();
     }
 });
 
