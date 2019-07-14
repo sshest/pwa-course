@@ -8,7 +8,12 @@
   top: 56px;
   background: white;
   text-align: center;
-  display: none;
+  -webkit-transform: translateY(100vh);
+  -moz-transform: translateY(100vh);
+  -ms-transform: translateY(100vh);
+  -o-transform: translateY(100vh);
+  transform: translateY(100vh);
+  transition: transform 0.3s
 }
 
 .main-image {
