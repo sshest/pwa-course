@@ -1,7 +1,7 @@
-var shareImageButton = document.querySelector('#share-image-button');
-var createPostArea = document.querySelector('#create-post');
-var closeCreatePostModalButton = document.querySelector('#close-create-post-modal-btn');
-var sharedMomentsArea = document.querySelector('#shared-moments');
+const shareImageButton = document.querySelector('#share-image-button');
+const createPostArea = document.querySelector('#create-post');
+const closeCreatePostModalButton = document.querySelector('#close-create-post-modal-btn');
+const sharedMomentsArea = document.querySelector('#shared-moments');
 
 function openCreatePostModal() {
   createPostArea.style.display = 'block';
@@ -31,7 +31,6 @@ closeCreatePostModalButton.addEventListener('click', closeCreatePostModal);
 
 // Not in use, allows to cache on demand
 function onSaveButtonClicked(event) {
-    console.log('clicked');
     if ('caches' in window) {
         caches.open('user-requested')
             .then((cache) => {
@@ -42,47 +41,47 @@ function onSaveButtonClicked(event) {
 }
 
 function clearCards() {
-    while(sharedMomentsArea.hasChildNodes()) {
-        sharedMomentsArea.removeChild(sharedMomentsArea.lastChild);
-    }
+    // while(sharedMomentsArea.hasChildNodes()) {
+    //     sharedMomentsArea.removeChild(sharedMomentsArea.lastChild);
+    // }
 }
 
 function createCard(data) {
     clearCards();
-  var cardWrapper = document.createElement('div');
+  const cardWrapper = document.createElement('div');
   cardWrapper.className = 'shared-moment-card mdl-card mdl-shadow--2dp';
-  var cardTitle = document.createElement('div');
+  const cardTitle = document.createElement('div');
   cardTitle.className = 'mdl-card__title';
   cardTitle.style.backgroundImage = 'url(' + data.image + ')';
   cardTitle.style.backgroundSize = 'cover';
   cardTitle.style.height = '180px';
   cardWrapper.appendChild(cardTitle);
-  var cardTitleTextElement = document.createElement('h2');
+  const cardTitleTextElement = document.createElement('h2');
   cardTitleTextElement.className = 'mdl-card__title-text';
   cardTitleTextElement.style.color = 'white';
   cardTitleTextElement.textContent = data.title;
   cardTitle.appendChild(cardTitleTextElement);
-  var cardSupportingText = document.createElement('div');
+  const cardSupportingText = document.createElement('div');
   cardSupportingText.className = 'mdl-card__supporting-text';
   cardSupportingText.textContent = data.location;
   cardSupportingText.style.textAlign = 'center';
-  // var saveCardButton = document.createElement('button');
-  // saveCardButton.textContent ='Save';
-  // saveCardButton.addEventListener('click', onSaveButtonClicked);
-  // cardSupportingText.appendChild(saveCardButton);
+  const saveCardButton = document.createElement('button');
+  saveCardButton.textContent ='Save';
+  saveCardButton.addEventListener('click', onSaveButtonClicked);
+  cardSupportingText.appendChild(saveCardButton);
   cardWrapper.appendChild(cardSupportingText);
   componentHandler.upgradeElement(cardWrapper);
   sharedMomentsArea.appendChild(cardWrapper);
 }
 
 function updateUI(data) {
-    for (var i=0; i < data.length; i++) {
+    for (let i=0; i < data.length; i++) {
         createCard(data[i]);
     }
 }
 
-var url = 'https://pwa-cource-project.firebaseio.com/posts.json';
-var networkDataReceived = false;
+const url = 'https://pwa-cource-project.firebaseio.com/posts.json';
+const networkDataReceived = false;
 
 fetch(url)
     .then(function(res) {
