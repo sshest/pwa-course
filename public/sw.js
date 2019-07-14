@@ -2,7 +2,7 @@ importScripts('/src/js/idb.js');
 importScripts('/src/js/utility.js');
 
 const CACHE_STATIC_CURRENT_NAME = 'static-v3';
-const CACHE_DYNAMIC_CURRENT_NAME = 'dynamic-v2';
+const CACHE_DYNAMIC_CURRENT_NAME = 'dynamic-v3';
 const STATIC_FILES = [
     '/',
     '/index.html',
@@ -55,7 +55,10 @@ self.addEventListener('fetch', (event) => {
             fetch(event.request)
                 .then((res) => {
                     const clonedResponse = res.clone();
-                    clonedResponse.json()
+                    clearAllData('posts')
+                        .then(() => {
+                            return clonedResponse.json()
+                        })
                         .then((data) => {
                             for (const key in data) {
                                 if(!data.hasOwnProperty(key)) {
