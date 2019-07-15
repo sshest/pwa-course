@@ -54,7 +54,7 @@ function configurePushSubscription() {
                 const vapidPublicKey = 'BOBheh-RHWtrqY8UgW9pWsOCDJY8_VQHNKH_imSuGNfhbTWI7sIUIj8oucG2e-OiZR_LvBELQoiifWzsQYI5clE';
                 const converedVapidPublicKey = urlBase64ToUint8Array(vapidPublicKey);
                 // create new subscription
-                swReg.pushManager.subscribe({
+                return swReg.pushManager.subscribe({
                     userVisibleOnly: true,
                     applicationServerKey: converedVapidPublicKey
                 })
