@@ -1,8 +1,8 @@
 importScripts('/src/js/idb.js');
 importScripts('/src/js/utility.js');
 
-const CACHE_STATIC_CURRENT_NAME = 'static-v3';
-const CACHE_DYNAMIC_CURRENT_NAME = 'dynamic-v2';
+const CACHE_STATIC_CURRENT_NAME = 'static-v4';
+const CACHE_DYNAMIC_CURRENT_NAME = 'dynamic-v3';
 const STATIC_FILES = [
     '/',
     '/index.html',
@@ -202,3 +202,19 @@ self.addEventListener('sync', (event) => {
         )
     }
 });
+
+self.addEventListener('notificationclick', (event) => {
+    const notification = event.notification;
+    const action = event.action;
+
+    if (action === 'confirm') {
+        notification.close();
+    } else {
+        console.log(action);
+        notification.close();
+    }
+});
+
+self.addEventListener('notificationclose', (event) => {
+
+})
