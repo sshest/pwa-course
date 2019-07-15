@@ -19,10 +19,23 @@ exports.storePostsData = functions.https.onRequest((req, res) => {
    image: req.body.image
   })
       .then(() => {
-       return res.status(201).json({message: 'Data stores', id: req.body.id})
+       return res.status(201).json({message: 'Data stored', id: req.body.id})
       })
       .catch((err) => {
        res.status(500).json({error: err});
       })
  })
+});
+
+exports.fetchPostsData = functions.https.onRequest((req, res) => {
+    cors(req, res, () => {
+        return admin.database().ref('posts')
+            .once('value')
+            .then((snapshot) => {
+                const posts = snapshot.val();
+                return res.status(201).json(posts);
+
+            })
+            .catch((err) => res.status(500).json({error: err}));
+    });
 });

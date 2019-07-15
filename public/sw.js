@@ -1,8 +1,8 @@
 importScripts('/src/js/idb.js');
 importScripts('/src/js/utility.js');
 
-const CACHE_STATIC_CURRENT_NAME = 'static-v5';
-const CACHE_DYNAMIC_CURRENT_NAME = 'dynamic-v5';
+const CACHE_STATIC_CURRENT_NAME = 'static-v7';
+const CACHE_DYNAMIC_CURRENT_NAME = 'dynamic-v9';
 const STATIC_FILES = [
     '/',
     '/index.html',
@@ -18,7 +18,8 @@ const STATIC_FILES = [
     'https://fonts.googleapis.com/icon?family=Material+Icons',
     'https://cdnjs.cloudflare.com/ajax/libs/material-design-lite/1.3.0/material.indigo-pink.min.css'
 ];
-const url = 'https://us-central1-pwa-cource-project.cloudfunctions.net/storePostsData';
+const savePostUrl = 'https://us-central1-pwa-cource-project.cloudfunctions.net/storePostsData';
+const postsUrl = 'https://us-central1-pwa-cource-project.cloudfunctions.net/';
 
 self.addEventListener('install', (event) => {
     console.log('[Service Worker] Installing service worker ...', event);
@@ -49,7 +50,7 @@ self.addEventListener('activate', (event) => {
 
 self.addEventListener('fetch', (event) => {
     // get from network only data requests not cached previously
-    if (~event.request.url.indexOf(url)) {
+    if (~event.request.url.indexOf(postsUrl)) {
         console.log('[Service Worker] JSON Data requested');
         event.respondWith(
             fetch(event.request)
@@ -175,7 +176,7 @@ self.addEventListener('sync', (event) => {
                 .then((data) => {
                     for (const dt of data) {
                         const postId = dt.id;
-                        fetch(url, {
+                        fetch(savePostUrl, {
                             method: 'POST',
                             headers: {
                                 'Content-Type': 'application/json',

@@ -80,7 +80,7 @@ function updateUI(data) {
     }
 }
 
-const url = 'https://us-central1-pwa-cource-project.cloudfunctions.net/storePostsData';
+const url = 'https://us-central1-pwa-cource-project.cloudfunctions.net/fetchPostsData';
 let networkDataReceived = false;
 
 fetch(url)
@@ -92,6 +92,7 @@ fetch(url)
         networkDataReceived = true;
         const dataToArray = [];
         for (const key in data) {
+            console.log(key);
             if(!data.hasOwnProperty(key)) {
                 return;
             }
