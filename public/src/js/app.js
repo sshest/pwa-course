@@ -15,7 +15,7 @@ window.addEventListener('beforeinstallprompt', (event) => {
 });
 
 function displayConfirmNotification() {
-    if ('serviceWorker' in window) {
+    if ('serviceWorker' in navigator) {
         navigator.serviceWorker.ready
             .then((swRegistration) => {
                 const options = {
@@ -39,6 +39,47 @@ function displayConfirmNotification() {
     }
 }
 
+function configurePushSubscription() {
+    if (!'serviceWorker' in navigator) {
+        return;
+    }
+    let swReg;
+    navigator.serviceWorker.ready
+        .then((swRegistration) => {
+            swReg = swRegistration;
+            return swRegistration.pushManager.getSubscription()
+        })
+        .then((sub) => {
+            if (sub === null) {
+                const vapidPublicKey = 'BOBheh-RHWtrqY8UgW9pWsOCDJY8_VQHNKH_imSuGNfhbTWI7sIUIj8oucG2e-OiZR_LvBELQoiifWzsQYI5clE';
+                const converedVapidPublicKey = urlBase64ToUint8Array(vapidPublicKey);
+                // create new subscription
+                swReg.pushManager.subscribe({
+                    userVisibleOnly: true,
+                    applicationServerKey: converedVapidPublicKey
+                })
+            } else {
+                // we have an existing one
+            }
+        })
+        .then((newSubsciption) => {
+            fetch('https://pwa-cource-project.firebaseio.com/subscriptions.json', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json'
+                },
+                body: JSON.stringify(newSubsciption)
+            })
+        })
+        .then((resp) => {
+            if (resp.ok) {
+                displayConfirmNotification();
+            }
+        })
+        .catch(console.log);
+}
+
 function askForNotificationPermission() {
     Notification.requestPermission((result) => {
         console.log('User choice ', result);
@@ -46,7 +87,7 @@ function askForNotificationPermission() {
             console.log('No Notification permission granted');
             return;
         }
-        displayConfirmNotification();
+        configurePushSubscription();
     });
 }
 
