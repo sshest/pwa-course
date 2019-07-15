@@ -11,6 +11,7 @@ admin.initializeApp({
     databaseURL: 'https://pwa-cource-project.firebaseio.com/',
     credential: admin.credential.cert(serviceAccount)
 });
+
 exports.storePostsData = functions.https.onRequest((req, res) => {
  cors(req, res, () => {
   admin.database().ref('posts').push({

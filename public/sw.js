@@ -1,8 +1,8 @@
 importScripts('/src/js/idb.js');
 importScripts('/src/js/utility.js');
 
-const CACHE_STATIC_CURRENT_NAME = 'static-v4';
-const CACHE_DYNAMIC_CURRENT_NAME = 'dynamic-v3';
+const CACHE_STATIC_CURRENT_NAME = 'static-v7';
+const CACHE_DYNAMIC_CURRENT_NAME = 'dynamic-v6';
 const STATIC_FILES = [
     '/',
     '/index.html',
@@ -216,5 +216,26 @@ self.addEventListener('notificationclick', (event) => {
 });
 
 self.addEventListener('notificationclose', (event) => {
+    console.log('Notification closed', event);
+});
 
+self.addEventListener('push', (event) => {
+    console.log('Push notification received, event');
+
+    let data = {
+        title: 'New!',
+        content: 'Dummy content from the browser'
+    };
+    if (event.data) {
+        data = JSON.parse(event.data.text());
+    }
+
+    const options = {
+        body: data.content,
+        icon: '/src/images/icons/app-icon-96x96.png',
+        badge: '/src/images/icons/app-icon-96x96.png'
+    };
+    event.waitUntil(
+        self.registration.showNotification(data.title, options)
+    )
 })

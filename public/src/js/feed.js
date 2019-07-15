@@ -92,7 +92,6 @@ fetch(url)
         networkDataReceived = true;
         const dataToArray = [];
         for (const key in data) {
-            console.log(key);
             if(!data.hasOwnProperty(key)) {
                 return;
             }

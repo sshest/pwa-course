@@ -67,7 +67,8 @@ function configurePushSubscription() {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
-                    'Accept': 'application/json'
+                    'Accept': 'application/json',
+                    'Access-Control-Allow-Origin': '*'
                 },
                 body: JSON.stringify(newSubsciption)
             })
@@ -83,10 +84,10 @@ function configurePushSubscription() {
 function askForNotificationPermission() {
     Notification.requestPermission((result) => {
         console.log('User choice ', result);
-        if (result !== 'granted') {
-            console.log('No Notification permission granted');
-            return;
-        }
+        // if (result !== 'granted') {
+        //     console.log('No Notification permission granted');
+        //     return;
+        // }
         configurePushSubscription();
     });
 }
