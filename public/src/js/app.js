@@ -19,7 +19,13 @@ function displayConfirmNotification() {
         navigator.serviceWorker.ready
             .then((swRegistration) => {
                 const options = {
-                    body: 'You successfully subscribed to our notification service!'
+                    body: 'You successfully subscribed to our notification service!',
+                    icon: '/src/images/icons/app-icon-96x96.png',
+                    image: '/src/images/sf-boat.jpg',
+                    dir: 'ltr',
+                    lang: 'en-US',
+                    vibrate: [100, 50, 200],
+                    badge: '/src/images/icons/app-icon-96x96.png'
                 };
                 swRegistration.showNotification('Subscribed successfully', options)
             })
