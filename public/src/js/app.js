@@ -15,10 +15,15 @@ window.addEventListener('beforeinstallprompt', (event) => {
 });
 
 function displayConfirmNotification() {
-    const options = {
-        body: 'You successfully subscribed to our notification service!'
-    };
-    new Notification('Subscribed successfully', options);
+    if ('serviceWorker' in window) {
+        navigator.serviceWorker.ready
+            .then((swRegistration) => {
+                const options = {
+                    body: 'You successfully subscribed to our notification service!'
+                };
+                swRegistration.showNotification('Subscribed successfully', options)
+            })
+    }
 }
 
 function askForNotificationPermission() {
