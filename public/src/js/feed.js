@@ -127,7 +127,7 @@ function sendData() {
         })
     })
     .then((resp) => {
-        cosole.log('Sent data ', resp);
+        console.log('Sent data ', resp);
         updateUI();
     });
 }

@@ -62,16 +62,15 @@ function configurePushSubscription() {
                 // we have an existing one
             }
         })
-        .then((newSubsciption) => {
-            fetch('https://pwa-cource-project.firebaseio.com/subscriptions.json', {
+        .then((newSubscription) => {
+            return fetch('https://pwa-cource-project.firebaseio.com/subscriptions.json', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
-                    'Accept': 'application/json',
-                    'Access-Control-Allow-Origin': '*'
+                    'Accept': 'application/json'
                 },
-                body: JSON.stringify(newSubsciption)
-            })
+                body: JSON.stringify(newSubscription)
+            });
         })
         .then((resp) => {
             if (resp.ok) {

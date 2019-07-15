@@ -1,8 +1,8 @@
 importScripts('/src/js/idb.js');
 importScripts('/src/js/utility.js');
 
-const CACHE_STATIC_CURRENT_NAME = 'static-v7';
-const CACHE_DYNAMIC_CURRENT_NAME = 'dynamic-v6';
+const CACHE_STATIC_CURRENT_NAME = 'static-v3';
+const CACHE_DYNAMIC_CURRENT_NAME = 'dynamic-v3';
 const STATIC_FILES = [
     '/',
     '/index.html',
@@ -62,7 +62,7 @@ self.addEventListener('fetch', (event) => {
                         })
                         .then((data) => {
                             for (const key in data) {
-                                if(!data.hasOwnProperty(key)) {
+                                if (!data.hasOwnProperty(key)) {
                                     return;
                                 }
                                 writeData('posts', data[key]);
@@ -180,8 +180,7 @@ self.addEventListener('sync', (event) => {
                             method: 'POST',
                             headers: {
                                 'Content-Type': 'application/json',
-                                'Accept': 'application/json',
-                                'Access-Control-Allow-Origin': '*'
+                                'Accept': 'application/json'
                             },
                             body: JSON.stringify({
                                 id: dt.id,
