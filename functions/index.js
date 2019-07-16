@@ -44,9 +44,10 @@ exports.storePostsData = functions.https.onRequest((req, res) => {
                      console.log(err);
                  } else {
                      admin.database().ref('posts').push({
-                         id: fileds.id,
-                         title: fileds.title,
-                         location: fileds.location,
+                         id: fields.id,
+                         title: fields.title,
+                         location: fields.location,
+                         rawLocation: {latitude: fields.rawLocation.latitude, longtitude: fields.rawLocation.longitude},
                          image: 'https://firebasestorage.googleapis.com/v0/b/' + bucket.name + '/o/' + encodeURIComponent(file.name) + '?alt=media&token=' + uuid
                      })
                          .then(() => {

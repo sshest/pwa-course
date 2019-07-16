@@ -3,12 +3,16 @@ const createPostArea = document.querySelector('#create-post');
 const closeCreatePostModalButton = document.querySelector('#close-create-post-modal-btn');
 const sharedMomentsArea = document.querySelector('#shared-moments');
 const form = document.querySelector('form');
+const locationInput = document.querySelector('#location');
 const videoPlayer = document.querySelector('#player');
 const canvasElement = document.querySelector('#canvas');
 const captureButton = document.querySelector('#capture-btn');
 const imagePicker = document.querySelector('#image-picker');
 const imagePickerArea = document.querySelector('#pick-image');
+const locationBtn = document.querySelector('#location-btn');
+const locationSpinner = document.querySelector('#location-loader');
 let picture;
+let fetchedLocation = null;
 
 function initializeMedia() {
     if (!('mediaDevices' in navigator)) {
@@ -39,9 +43,17 @@ function initializeMedia() {
         })
 }
 
+function initializeGeolocation() {
+    if (!('geolocation' in navigator)) {
+        locationBtn.style.display = 'none';
+
+    }
+}
+
 function openCreatePostModal() {
   createPostArea.style.transform = 'translateY(0)';
   initializeMedia();
+  initializeGeolocation();
   if (deferredPromt) {
     deferredPromt.prompt();
 
@@ -59,10 +71,17 @@ function openCreatePostModal() {
 }
 
 function closeCreatePostModal() {
-    createPostArea.style.transform = 'translateY(100vh)';
+
     imagePickerArea.style.display = 'none';
     videoPlayer.style.display = 'none';
     canvasElement.style.display = 'none';
+    locationBtn.style.display = 'inline';
+    locationSpinner.style.display = 'block';
+    captureButton.style.display = 'inline';
+    videoPlayer.scrObject.getVideoTracks().forEach((track) => track.stop());
+    setTimeout(() => {
+        createPostArea.style.transform = 'translateY(100vh)';
+    }, 1)
 }
 
 shareImageButton.addEventListener('click', openCreatePostModal);
@@ -158,6 +177,7 @@ function sendData() {
     postData.append('title', titleInput.value);
     postData.append('location', locationInput.value);
     postData.append('file', picture, id + '.png');
+    postData.append('rawLocation', fetchedLocation);
 
     fetch(url, {
         method: 'POST',
@@ -184,7 +204,8 @@ form.addEventListener('submit', (ev) => {
                     id: new Date().toISOString(),
                     title: form.title.value,
                     location: form.location.value,
-                    picture: picture
+                    picture: picture,
+                    rawLocation: fetchedLocation
                 };
                 writeData('sync-posts', post)
                     .then(() => {
@@ -218,4 +239,30 @@ imagePicker.addEventListener('change', (event) => {
     picture = event.target.files[0];
 });
 
+locationBtn.addEventListener('click', () => {
+    if (!('geolocation' in navigator)) {
+        return;
+    }
+
+    locationBtn.style.display = 'none';
+    locationSpinner.style.display = 'block';
+
+    navigator.geolocation.getCurrentPosition(
+        (position) => {
+            locationSpinner.style.display = 'none';
+            locationBtn.style.display = 'inline';
+            fetchedLocation = {...position.coords};
+            locationInput.value = `${position.coords.latitude} ${position.coords.longitude}`;
+            document.querySelector('#manual-location').classList.add('is-focused');
+    },
+        (error) => {
+            console.log(error);
+            locationSpinner.style.display = 'none';
+            locationBtn.style.display = 'inline';
+            fetchedLocation = null;
+        },
+        {
+            timeout: 7000
+        })
+});
 

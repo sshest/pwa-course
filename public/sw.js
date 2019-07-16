@@ -1,8 +1,8 @@
 importScripts('/src/js/idb.js');
 importScripts('/src/js/utility.js');
 
-const CACHE_STATIC_CURRENT_NAME = 'static-v3';
-const CACHE_DYNAMIC_CURRENT_NAME = 'dynamic-v7';
+const CACHE_STATIC_CURRENT_NAME = 'static-v8';
+const CACHE_DYNAMIC_CURRENT_NAME = 'dynamic-v9';
 const STATIC_FILES = [
     '/',
     '/index.html',
@@ -181,6 +181,7 @@ self.addEventListener('sync', (event) => {
                         postData.append('title', dt.title);
                         postData.append('location', dt.location);
                         postData.append('file', dt.picture, postId + '.png');
+                        postData.append('rawLocation', dt.rawLocation);
                         fetch(savePostUrl, {
                             method: 'POST',
                             body: postData
