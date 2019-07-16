@@ -61,4 +61,112 @@ workbox.routing.registerRoute('https://us-central1-pwa-cource-project.cloudfunct
         });
 });
 
+workbox.routing.registerRoute((routeData )=> {
+    return routeData.event.request.headers.get('accept').includes('text/html');
+}, (args) => {
+    return caches.match(args.event.request)
+        .then((response) => {
+            if (response) {
+                return response;
+            } else {
+                return fetch(args.event.request)
+                    .then((res) => {
+                        return caches.open('dynamic')
+                            .then((cache) => {
+                                cache.put(args.event.request.url, res.clone());
+                                return res;
+                            })
+                    })
+                    .catch((err) => {
+                        return caches.match('/offline.html')
+                            .then((res) => {
+                                return res;
+                            })
+                    });
+            }
+        });
+});
+
+self.addEventListener('sync', (event) => {
+    console.log('[Service Worker] Background syncing');
+    if (event.tag === 'sync-new-post') {
+        event.waitUntil(
+            readAllData('sync-posts')
+                .then((data) => {
+                    for (const dt of data) {
+                        const postId = dt.id;
+                        const postData = new FormData();
+                        postData.append('id', postId);
+                        postData.append('title', dt.title);
+                        postData.append('location', dt.location);
+                        postData.append('file', dt.picture, postId + '.png');
+                        postData.append('rawLocation', dt.rawLocation);
+                        fetch(savePostUrl, {
+                            method: 'POST',
+                            body: postData
+                        })
+                            .then((resp) => {
+                                console.log('Sent data ', resp);
+                                if (resp.ok) {
+                                    deleteSingleItemData('sync-posts', postId);
+                                }
+                            })
+                            .catch(console.log);
+                    }
+                })
+        )
+    }
+});
+
+self.addEventListener('notificationclick', (event) => {
+    const notification = event.notification;
+    const action = event.action;
+
+    if (action === 'confirm') {
+        notification.close();
+    } else {
+        event.waitUntil(
+            clients.matchAll()
+                .then(cnts => {
+                    const client = cnts.find(c => c.visibilityState === 'visible');
+                    if (!!client) {
+                        client.navigate(notification.data.url);
+                        client.focus();
+                    } else {
+                        clients.openWindow(notification.data.url);
+                    }
+                })
+        );
+        notification.close();
+    }
+});
+
+self.addEventListener('notificationclose', (event) => {
+    console.log('Notification closed', event);
+});
+
+self.addEventListener('push', (event) => {
+    console.log('Push notification received, event');
+
+    let data = {
+        title: 'New!',
+        content: 'Dummy content from the browser',
+        openUrl: '/'
+    };
+    if (event.data) {
+        data = JSON.parse(event.data.text());
+    }
+
+    const options = {
+        body: data.content,
+        icon: '/src/images/icons/app-icon-96x96.png',
+        badge: '/src/images/icons/app-icon-96x96.png',
+        data: {
+            url: data.openUrl
+        }
+    };
+    event.waitUntil(
+        self.registration.showNotification(data.title, options)
+    )
+});
 workbox.precaching.precacheAndRoute([]);
