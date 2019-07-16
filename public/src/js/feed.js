@@ -216,7 +216,7 @@ form.addEventListener('submit', (ev) => {
                         const data = {
                             message: 'Your post was saved for synchronization!'
                         };
-                        snackbarContainer.MaterialSnackBar.showSnackbar(data);
+                        // snackbarContainer.MaterialSnackBar.showSnackbar(data);
                     })
                     .catch(console.log);
             })

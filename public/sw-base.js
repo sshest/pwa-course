@@ -14,6 +14,8 @@ importScripts('/src/js/idb.js');
 importScripts('/src/js/utility.js');
 importScripts("https://storage.googleapis.com/workbox-cdn/releases/4.3.1/workbox-sw.js");
 
+const savePostUrl = 'https://us-central1-pwa-cource-project.cloudfunctions.net/storePostsData';
+
 self.addEventListener('message', (event) => {
     if (event.data && event.data.type === 'SKIP_WAITING') {
         self.skipWaiting();
