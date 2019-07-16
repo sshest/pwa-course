@@ -209,7 +209,18 @@ self.addEventListener('notificationclick', (event) => {
     if (action === 'confirm') {
         notification.close();
     } else {
-        console.log(action);
+        event.waitUntil(
+            clients.matchAll()
+                .then(cnts => {
+                    const client = cnts.find(c => c.visibilityState === 'visible');
+                    if (!!client) {
+                        client.navigate('http://localhost:8080');
+                        client.focus();
+                    } else {
+                        clients.openWindow('http://localhost:8080');
+                    }
+                })
+        );
         notification.close();
     }
 });
