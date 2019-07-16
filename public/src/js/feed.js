@@ -195,7 +195,7 @@ form.addEventListener('submit', (ev) => {
                         const data = {
                             message: 'Your post was saved for synchronization!'
                         };
-                        // snackbarContainer.MaterialSnackBar.showSnackbar(data);
+                        snackbarContainer.MaterialSnackBar.showSnackbar(data);
                     })
                     .catch(console.log);
             })
@@ -212,6 +212,10 @@ captureButton.addEventListener('click', (event) => {
     context.drawImage(videoPlayer, 0, 0, canvas.width, videoPlayer.videoHeight / (videoPlayer.videoWidth / canvas.width));
     videoPlayer.scrObject.getVideoTracks().forEach((track) => track.stop());
     picture = dataURItoBlob(canvasElement.toDataURL())
+});
+
+imagePicker.addEventListener('change', (event) => {
+    picture = event.target.files[0];
 });
 
 
