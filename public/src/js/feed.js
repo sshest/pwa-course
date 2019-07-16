@@ -8,9 +8,10 @@ const canvasElement = document.querySelector('#canvas');
 const captureButton = document.querySelector('#capture-btn');
 const imagePicker = document.querySelector('#image-picker');
 const imagePickerArea = document.querySelector('#pick-image');
+let picture;
 
 function initializeMedia() {
-    if (!('mediadevices' in navigator)) {
+    if (!('mediaDevices' in navigator)) {
         navigator.mediaDevices = {};
     }
     if (!('getUsersMedia' in navigator.mediaDevices)) {
@@ -25,6 +26,17 @@ function initializeMedia() {
             })
         }
     }
+
+    navigator.mediaDevices.getUserMedia({
+        video: true
+    })
+        .then((stream) => {
+            videoPlayer.srcObject = stream;
+            videoPlayer.style.display = 'block';
+        })
+        .catch(err => {
+            imagePickerArea.style.display = 'block';
+        })
 }
 
 function openCreatePostModal() {
@@ -48,6 +60,9 @@ function openCreatePostModal() {
 
 function closeCreatePostModal() {
     createPostArea.style.transform = 'translateY(100vh)';
+    imagePickerArea.style.display = 'none';
+    videoPlayer.style.display = 'none';
+    canvasElement.style.display = 'none';
 }
 
 shareImageButton.addEventListener('click', openCreatePostModal);
@@ -137,18 +152,16 @@ if ('indexedDB' in window) {
 }
 
 function sendData() {
+    const id = new Date().toISOString();
+    const postData = new FormData();
+    postData.append('id', id);
+    postData.append('title', titleInput.value);
+    postData.append('location', locationInput.value);
+    postData.append('file', picture, id + '.png');
+
     fetch(url, {
         method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-            'Accept': 'application/json'
-        },
-        body: JSON.stringify({
-            id: new Date().toISOString(),
-            title: form.title.value,
-            location: form.location.value,
-            image: 'https://firebasestorage.googleapis.com/v0/b/pwa-cource-project.appspot.com/o/sf-boat.jpg?alt=media&token=f954cec8-8679-4ee6-85c5-8eb10cdf69da'
-        })
+        body: postData
     })
     .then((resp) => {
         console.log('Sent data ', resp);
@@ -170,7 +183,8 @@ form.addEventListener('submit', (ev) => {
                 const post = {
                     id: new Date().toISOString(),
                     title: form.title.value,
-                    location: form.location.value
+                    location: form.location.value,
+                    picture: picture
                 };
                 writeData('sync-posts', post)
                     .then(() => {
@@ -188,6 +202,16 @@ form.addEventListener('submit', (ev) => {
     } else {
         sendData();
     }
+});
+
+captureButton.addEventListener('click', (event) => {
+    canvasElement.style.display = 'block';
+    videoPlayer.style.display = 'none';
+    captureButton.style.display = 'none';
+    const context = canvasElement.getContext('2d');
+    context.drawImage(videoPlayer, 0, 0, canvas.width, videoPlayer.videoHeight / (videoPlayer.videoWidth / canvas.width));
+    videoPlayer.scrObject.getVideoTracks().forEach((track) => track.stop());
+    picture = dataURItoBlob(canvasElement.toDataURL())
 });
 
 

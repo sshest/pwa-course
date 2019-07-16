@@ -1,8 +1,8 @@
 importScripts('/src/js/idb.js');
 importScripts('/src/js/utility.js');
 
-const CACHE_STATIC_CURRENT_NAME = 'static-v10';
-const CACHE_DYNAMIC_CURRENT_NAME = 'dynamic-v6';
+const CACHE_STATIC_CURRENT_NAME = 'static-v15';
+const CACHE_DYNAMIC_CURRENT_NAME = 'dynamic-v7';
 const STATIC_FILES = [
     '/',
     '/index.html',
@@ -176,18 +176,14 @@ self.addEventListener('sync', (event) => {
                 .then((data) => {
                     for (const dt of data) {
                         const postId = dt.id;
+                        const postData = new FormData();
+                        postData.append('id', postId);
+                        postData.append('title', dt.title);
+                        postData.append('location', dt.location);
+                        postData.append('file', dt.picture, postId + '.png');
                         fetch(savePostUrl, {
                             method: 'POST',
-                            headers: {
-                                'Content-Type': 'application/json',
-                                'Accept': 'application/json'
-                            },
-                            body: JSON.stringify({
-                                id: dt.id,
-                                title: dt.title,
-                                location: dt.location,
-                                image: 'https://firebasestorage.googleapis.com/v0/b/pwa-cource-project.appspot.com/o/sf-boat.jpg?alt=media&token=f954cec8-8679-4ee6-85c5-8eb10cdf69da'
-                            })
+                            body: postData
                         })
                             .then((resp) => {
                                 console.log('Sent data ', resp);
