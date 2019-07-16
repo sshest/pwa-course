@@ -60,6 +60,7 @@ function configurePushSubscription() {
                 })
             } else {
                 // we have an existing one
+                return sub;
             }
         })
         .then((newSubscription) => {
@@ -82,11 +83,10 @@ function configurePushSubscription() {
 
 function askForNotificationPermission() {
     Notification.requestPermission((result) => {
-        console.log('User choice ', result);
-        // if (result !== 'granted') {
-        //     console.log('No Notification permission granted');
-        //     return;
-        // }
+        if (result !== 'granted') {
+            console.log('No Notification permission granted');
+            return;
+        }
         configurePushSubscription();
     });
 }

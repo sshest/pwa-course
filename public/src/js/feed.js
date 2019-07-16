@@ -3,9 +3,33 @@ const createPostArea = document.querySelector('#create-post');
 const closeCreatePostModalButton = document.querySelector('#close-create-post-modal-btn');
 const sharedMomentsArea = document.querySelector('#shared-moments');
 const form = document.querySelector('form');
+const videoPlayer = document.querySelector('#player');
+const canvasElement = document.querySelector('#canvas');
+const captureButton = document.querySelector('#capture-btn');
+const imagePicker = document.querySelector('#image-picker');
+const imagePickerArea = document.querySelector('#pick-image');
+
+function initializeMedia() {
+    if (!('mediadevices' in navigator)) {
+        navigator.mediaDevices = {};
+    }
+    if (!('getUsersMedia' in navigator.mediaDevices)) {
+        navigator.mediaDevices.getUserMedia = (constraints) => {
+            const getUserMedia = navigator.webkitGetUserMedia || navigator.mozGetUsreMedia;
+            if (!getUserMedia) {
+                return Promise.reject(new Error('GetUserMedia is not supported.'));
+            }
+
+            return new Promise((resolve, reject) => {
+                getUserMedia.call(navigator, constraints, resolve, reject);
+            })
+        }
+    }
+}
 
 function openCreatePostModal() {
   createPostArea.style.transform = 'translateY(0)';
+  initializeMedia();
   if (deferredPromt) {
     deferredPromt.prompt();
 

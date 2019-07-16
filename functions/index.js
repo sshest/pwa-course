@@ -37,7 +37,8 @@ exports.storePostsData = functions.https.onRequest((req, res) => {
               };
               webpush.sendNotification(pushConfig, JSON.stringify({
                   title: 'New post',
-                  content: 'New post added!'
+                  content: 'New post added!',
+                  openUrl: '/help'
               }))
                   .catch(console.log);
           });

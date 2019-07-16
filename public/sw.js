@@ -1,8 +1,8 @@
 importScripts('/src/js/idb.js');
 importScripts('/src/js/utility.js');
 
-const CACHE_STATIC_CURRENT_NAME = 'static-v4';
-const CACHE_DYNAMIC_CURRENT_NAME = 'dynamic-v4';
+const CACHE_STATIC_CURRENT_NAME = 'static-v10';
+const CACHE_DYNAMIC_CURRENT_NAME = 'dynamic-v6';
 const STATIC_FILES = [
     '/',
     '/index.html',
@@ -214,10 +214,10 @@ self.addEventListener('notificationclick', (event) => {
                 .then(cnts => {
                     const client = cnts.find(c => c.visibilityState === 'visible');
                     if (!!client) {
-                        client.navigate('http://localhost:8080');
+                        client.navigate(notification.data.url);
                         client.focus();
                     } else {
-                        clients.openWindow('http://localhost:8080');
+                        clients.openWindow(notification.data.url);
                     }
                 })
         );
@@ -234,7 +234,8 @@ self.addEventListener('push', (event) => {
 
     let data = {
         title: 'New!',
-        content: 'Dummy content from the browser'
+        content: 'Dummy content from the browser',
+        openUrl: '/'
     };
     if (event.data) {
         data = JSON.parse(event.data.text());
@@ -243,7 +244,10 @@ self.addEventListener('push', (event) => {
     const options = {
         body: data.content,
         icon: '/src/images/icons/app-icon-96x96.png',
-        badge: '/src/images/icons/app-icon-96x96.png'
+        badge: '/src/images/icons/app-icon-96x96.png',
+        data: {
+            url: data.openUrl
+        }
     };
     event.waitUntil(
         self.registration.showNotification(data.title, options)
