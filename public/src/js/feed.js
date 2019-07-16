@@ -78,7 +78,7 @@ function closeCreatePostModal() {
     locationBtn.style.display = 'inline';
     locationSpinner.style.display = 'block';
     captureButton.style.display = 'inline';
-    videoPlayer.scrObject.getVideoTracks().forEach((track) => track.stop());
+    videoPlayer.srcObject.getVideoTracks().forEach((track) => track.stop());
     setTimeout(() => {
         createPostArea.style.transform = 'translateY(100vh)';
     }, 1)
@@ -231,7 +231,7 @@ captureButton.addEventListener('click', (event) => {
     captureButton.style.display = 'none';
     const context = canvasElement.getContext('2d');
     context.drawImage(videoPlayer, 0, 0, canvas.width, videoPlayer.videoHeight / (videoPlayer.videoWidth / canvas.width));
-    videoPlayer.scrObject.getVideoTracks().forEach((track) => track.stop());
+    videoPlayer.srcObject.getVideoTracks().forEach((track) => track.stop());
     picture = dataURItoBlob(canvasElement.toDataURL())
 });
 

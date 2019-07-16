@@ -2,7 +2,7 @@ let deferredPromt;
 const enableNotificationButtons = document.querySelectorAll('.enable-notifications');
 
 if ('serviceWorker' in navigator) {
-    navigator.serviceWorker.register('/sw.js')
+    navigator.serviceWorker.register('/service-worker.js')
         .then(() => {
             console.log('service Worker registered!');
         });
