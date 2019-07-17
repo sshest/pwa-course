@@ -47,7 +47,7 @@ exports.storePostsData = functions.https.onRequest((request, response) => {
 
         // This callback will be invoked after all uploaded files are saved.
         busboy.on("finish", () => {
-            const bucket = gcs.bucket("YOUR_PROJECT_ID.appspot.com");
+            const bucket = googleCloudStorage.bucket("pwa-cource-project.appspot.com");
             bucket.upload(
                 upload.file,
                 {
@@ -67,10 +67,7 @@ exports.storePostsData = functions.https.onRequest((request, response) => {
                             .push({
                                 title: fields.title,
                                 location: fields.location,
-                                rawLocation: {
-                                    lat: fields.rawLocationLat,
-                                    lng: fields.rawLocationLng
-                                },
+                                rawLocation: fields.rawLocation,
                                 image:
                                     "https://firebasestorage.googleapis.com/v0/b/" +
                                     bucket.name +
@@ -81,9 +78,9 @@ exports.storePostsData = functions.https.onRequest((request, response) => {
                             })
                             .then(() => {
                                 webpush.setVapidDetails(
-                                    "mailto:business@academind.com",
-                                    "BKapuZ3XLgt9UZhuEkodCrtnfBo9Smo-w1YXCIH8YidjHOFAU6XHpEnXefbuYslZY9vtlEnOAmU7Mc-kWh4gfmE",
-                                    "AyVHwGh16Kfxrh5AU69E81nVWIKcUwR6a9f1X4zXT_s"
+                                    'mailto:sshest78@gmail.com',
+                                    'BOBheh-RHWtrqY8UgW9pWsOCDJY8_VQHNKH_imSuGNfhbTWI7sIUIj8oucG2e-OiZR_LvBELQoiifWzsQYI5clE',
+                                    'TSfRxQOWxMANsOLf_XQfqcL4oDx4m0qd32B8lK7iHjc'
                                 );
                                 return admin
                                     .database()

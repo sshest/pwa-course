@@ -54,10 +54,10 @@ function openCreatePostModal() {
   createPostArea.style.transform = 'translateY(0)';
   initializeMedia();
   initializeGeolocation();
-  if (deferredPromt) {
-    deferredPromt.prompt();
+  if (deferredPrompt) {
+    deferredPrompt.prompt();
 
-    deferredPromt.userChoice.then((choiceResult) => {
+    deferredPrompt.userChoice.then((choiceResult) => {
       console.log(choiceResult.outcome);
 
       if (choiceResult.outcome === 'dismissed') {
@@ -65,7 +65,7 @@ function openCreatePostModal() {
       } else {
         console.log('User added the App to the home screen')
       }
-      deferredPromt = null;
+      deferredPrompt = null;
     });
   }
 }
@@ -78,7 +78,7 @@ function closeCreatePostModal() {
     locationBtn.style.display = 'inline';
     locationSpinner.style.display = 'block';
     captureButton.style.display = 'inline';
-    videoPlayer.srcObject.getVideoTracks().forEach((track) => track.stop());
+    videoPlayer.srcObject && videoPlayer.srcObject.getVideoTracks().forEach((track) => track.stop());
     setTimeout(() => {
         createPostArea.style.transform = 'translateY(100vh)';
     }, 1)

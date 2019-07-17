@@ -14,6 +14,8 @@ importScripts('/src/js/idb.js');
 importScripts('/src/js/utility.js');
 importScripts("https://storage.googleapis.com/workbox-cdn/releases/4.3.1/workbox-sw.js");
 
+const savePostUrl = 'https://us-central1-pwa-cource-project.cloudfunctions.net/storePostsData';
+
 self.addEventListener('message', (event) => {
     if (event.data && event.data.type === 'SKIP_WAITING') {
         self.skipWaiting();
@@ -172,7 +174,7 @@ self.addEventListener('push', (event) => {
 workbox.precaching.precacheAndRoute([
   {
     "url": "404.html",
-    "revision": "0a27a4163254fc8fce870c8cc3a3f94f"
+    "revision": "a4e2271d19eb1f6f93a15e1b7a4e74dd"
   },
   {
     "url": "favicon.ico",
@@ -180,7 +182,7 @@ workbox.precaching.precacheAndRoute([
   },
   {
     "url": "index.html",
-    "revision": "aa88e4ce2be709cebe4f9def8dcdc0e4"
+    "revision": "fa0e35159c7095db007067b09a3fae88"
   },
   {
     "url": "manifest.json",
@@ -204,11 +206,11 @@ workbox.precaching.precacheAndRoute([
   },
   {
     "url": "src/js/app.js",
-    "revision": "579870ed59177c7cf9fc3e8b8af90f29"
+    "revision": "fa7d68c8051c0072ae70823e7d5be6e5"
   },
   {
     "url": "src/js/feed.js",
-    "revision": "9f8fd550bc2e58fef9c5b4d80f9f518a"
+    "revision": "3ab6132b0b376683ea3dbe73382ced1a"
   },
   {
     "url": "src/js/fetch.js",
@@ -232,11 +234,7 @@ workbox.precaching.precacheAndRoute([
   },
   {
     "url": "sw-base.js",
-    "revision": "aa76f6a1238d766ea37c8f7efee9832b"
-  },
-  {
-    "url": "sw.js",
-    "revision": "492bcb45df1faa9438891578663dac24"
+    "revision": "babf328bcd6f9548cf8041920b04bcb4"
   },
   {
     "url": "src/images/main-image-lg.jpg",

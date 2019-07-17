@@ -1,4 +1,4 @@
-let deferredPromt;
+let deferredPrompt;
 const enableNotificationButtons = document.querySelectorAll('.enable-notifications');
 
 if ('serviceWorker' in navigator) {
@@ -10,7 +10,7 @@ if ('serviceWorker' in navigator) {
 
 window.addEventListener('beforeinstallprompt', (event) => {
     event.preventDefault();
-    deferredPromt = event;
+    deferredPrompt = event;
     return false;
 });
 
